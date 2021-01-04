@@ -1,2 +1,2 @@
 # spreadsheet-scripts
-Google Sheets scripts
+Google Sheets scripts for personal Sheets
