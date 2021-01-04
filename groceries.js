@@ -92,12 +92,14 @@ function generateShoppingList() {
 
     var recipesToBuy = getWeeklyCheckedRecipes(spreadsheet);
     var ingredientsToBuy = getIngFromRecipe(spreadsheet, recipesToBuy);
-    var ingredientsToBuy = ingredientsToBuy.sort(function(a,b) {
-        return (a[2] < b[2]) ? -1 : (a[2] > b[2]) ? 1 : 0;
-    }).sort(function(a, b) {
-        return (cond(a[3]) < cond(b[3])) ? -1 : (cond(a[3]) > cond(b[3])) ? 1 : 0;
-    });
-    shoplistSheet.getRange(_SHOPLISTSTARTROW, _SHOPLISTSTARTCOL, ingredientsToBuy.length, 4).setValues(ingredientsToBuy)
+    if(ingredientsToBuy.length > 0) {
+        var ingredientsToBuy = ingredientsToBuy.sort(function(a,b) {
+            return (a[2] < b[2]) ? -1 : (a[2] > b[2]) ? 1 : 0;
+        }).sort(function(a, b) {
+            return (cond(a[3]) < cond(b[3])) ? -1 : (cond(a[3]) > cond(b[3])) ? 1 : 0;
+        });
+        shoplistSheet.getRange(_SHOPLISTSTARTROW, _SHOPLISTSTARTCOL, ingredientsToBuy.length, 4).setValues(ingredientsToBuy)
+    }
 
     //formatting
     shoplistSheet.getRange(1, 1, 2, 4).setValues(_SHOPLISTHEADER);
@@ -128,6 +130,9 @@ function generateMealPlan() {
     var curX = _MEALPLANSTARTROW;
     for (let i = 0; i < recipesToBuy.length; i++) {
         var recipe = getRecipe(spreadsheet, recipesToBuy[i]);
+        if(!recipe) {
+            continue;
+        }
         mealPlanSheet.getRange(curX, 1, recipe.length, recipe[0].length).setValues(recipe);
         
         var height = 0;
@@ -231,7 +236,12 @@ function getRecipe(spreadsheet, recipeName) {
     var orderedRecipeList = getRecipeNameList(spreadsheet);
     var index = orderedRecipeList.indexOf(recipeName);
 
-    return recipeSheet.getRange(2, (index * 4) + 1 + _RECIPEOFFSET, _INGREDIENTMAX, 4).getValues();
+    if(index >= 0) {
+        return recipeSheet.getRange(2, (index * 4) + 1 + _RECIPEOFFSET, _INGREDIENTMAX, 4).getValues();
+    }
+    else {
+        return null;
+    }
 }
 
 function getIngFromRecipe(spreadsheet, recipeList) {
