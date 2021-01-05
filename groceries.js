@@ -39,6 +39,24 @@ function onOpen() {
     ];
     spreadsheet.addMenu('Directions', menuItems);
 }
+
+function onEdit() {
+    var spreadsheet = SpreadsheetApp.getActive();
+    var recipeSheet = spreadsheet.getSheetByName(_RECIPESHEET);
+
+    var numOfRecipe = getRecipeNameList(spreadsheet).length;
+    recipeSheet.getRange(_RECIPEOFFSET, 3, _RECIPEROWRANGE, numOfRecipe*4)
+        .setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP)
+        .setFontSize(10)
+        .setFontWeight("normal");
+
+    for (let i = 0; i < numOfRecipe; i++) {
+        recipeSheet.setColumnWidth((i * 4) + 3, 52);
+        recipeSheet.setColumnWidth((i * 4) + 4, 42);
+        recipeSheet.setColumnWidth((i * 4) + 5, 160);
+        recipeSheet.setColumnWidth((i * 4) + 6, 230);
+    }
+}
   
 function refreshWeekly() {
     var spreadsheet = SpreadsheetApp.getActive();
@@ -153,9 +171,10 @@ function generateMealPlan() {
         mealPlanSheet.setColumnWidth(1, 52);
         mealPlanSheet.setColumnWidth(2, 42);
         mealPlanSheet.setColumnWidth(3, 360);
-        mealPlanSheet.setColumnWidth(4, 650);
+        mealPlanSheet.setColumnWidth(4, 1000);
         mealPlanSheet.getRange(curX, 4, 1, 1).setValues([["Day:"]])
             .setFontWeight("bold");
+        mealPlanSheet.getRange("D1:D").setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP);
 
         curX += (height + 1);
     }
