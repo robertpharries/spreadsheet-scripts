@@ -30,6 +30,20 @@ const _MEALPLANHEADER = [
 
 const _SORTCONDITIONS = ["meat", "veg", "condiment", "spice", "longlife", "fridge", "frozen"];
 
+const _CONVERSIONS = {
+    "cup": {
+        "ml": 0.004,
+        "tbsp": 0.08,
+        "tsp": 0.02
+    },
+    "tbsp": {
+        "tsp": 0.25
+    },
+    "kg": {
+        "g": 0.001
+    }
+}
+
 function onOpen() {
     var spreadsheet = SpreadsheetApp.getActive();
     var menuItems = [
@@ -281,7 +295,6 @@ function getIngFromRecipe(spreadsheet, recipeList) {
 
         for (let j = 0; j < ranValues.length; j++) {
             if(ranValues[j][0]) {
-                //check duplicates
                 result = pushIngredient(result, ranValues[j])
             }
         }
@@ -374,11 +387,43 @@ function pushIngredient(a_list, entry) {
         if(entry[2] == a_list[i][2] && entry[1] == a_list[i][1]) {
             a_list[i][0] += entry[0];
             return a_list;
+        } else if(entry[2] == a_list[i][2]) {
+            n = resolveUnits(a_list[i], entry);
+            if(n) {
+                a_list[i] = n;
+                return a_list;
+            }
         }
     }
 
     a_list.push(entry);
     return a_list;
+}
+
+function resolveUnits(old, entry) {
+    var tryConversion = function(a, b) {
+        if(_CONVERSIONS[a[1]]) {
+            if(_CONVERSIONS[a[1]][b[1]]) {
+                return _CONVERSIONS[a[1]][b[1]] * b[0];
+            }
+        }
+
+        return null;
+    }
+
+    if(tryConversion(old, entry)) {
+        var n = tryConversion(old, entry);
+        old[0] = old[0] + n;
+        return old;
+    }
+    else if(tryConversion(entry, old)) {
+        var n = tryConversion(entry, old);
+        old[0] = entry[0] + n;
+        old[1] = entry[1];
+        return old;
+    }
+
+    return null;
 }
 
 var cond = function(term) {
