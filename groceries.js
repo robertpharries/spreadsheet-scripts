@@ -28,7 +28,7 @@ const _MEALPLANHEADER = [
     ["Quant.", "Units", "Item", "Cat."]
 ]
 
-const _SORTCONDITIONS = ["meat", "veg", "condiment", "spice", "longlife", "fridge", "frozen"];
+const _SORTCONDITIONS = ["meat", "fruit", "veg", "condiment", "spice", "longlife", "fridge", "frozen"];
 
 const _CONVERSIONS = {
     "cup": {
