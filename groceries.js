@@ -41,6 +41,9 @@ const _CONVERSIONS = {
     },
     "kg": {
         "g": 0.001
+    },
+    "L": {
+        "ml": 0.001
     }
 }
 
